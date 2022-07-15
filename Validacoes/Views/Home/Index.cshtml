@@ -1,0 +1,116 @@
+﻿<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Teste de validações</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+</head>
+<body>
+    <fieldset>
+        <br />
+        <button class="btn btn-primary" onclick="adicionaLinha('tabelaC')">Adicionar</button>
+    </fieldset>
+    <hr />
+
+    <form action="/Criar" method="post" id="formulario">
+
+        <table class="table" id="tabelaC">
+            <thead>
+                <tr>
+                    <th>Unidade Gestora</th>
+                    <th>Fonte</th>
+                    <th>Credor</th>
+                    <th>CPF</th>
+                    <th>Acao</th>
+                </tr>
+            </thead>
+        </table>
+        <input type="submit" class="btn btn-primary" value="Enviar" />
+    </form>
+</body>
+</html>
+
+<script>
+
+    function adicionaLinha(idTabela)
+    {
+
+        var tabela = document.getElementById(idTabela);
+        var numeroLinhas = tabela.rows.length;
+        var linha = tabela.insertRow(numeroLinhas);
+        var celula1 = linha.insertCell(0);
+        var celula2 = linha.insertCell(1);
+        var celula3 = linha.insertCell(2);
+        var celula4 = linha.insertCell(3);
+        var celula5 = linha.insertCell(4);
+        for (var i = 0; i < numeroLinhas; i++) {
+            celula1.innerHTML = '<input type="type" onkeyup="validarCampos('+i+')" id="UnidadeGestora' + i + '" value="' + Math.floor((Math.random() * 900000)) + '" /><p>Opções: <span id="UnidadeGestoraOpt'+i+'"></span></p>';
+            celula2.innerHTML = '<input type="type" onkeyup="validarCampos(' + i + ')" id="Fonte' + i + '" value="' + Math.floor((Math.random() * 9000)) + '" /><p>Opções: <span id="FonteOpt' + i +'"></span></p>';
+            celula3.innerHTML = '<input type="type" onkeyup="validarCampos(' + i + ')" id="Credor' + i + '" value="' + Math.floor((Math.random() * 90000000)) + '" /><p>Opções: <span id="CredorOpt' + i +'"></span></p>';
+            celula4.innerHTML = '<input type="type" onkeyup="validarCampos(' + i + ')" id="CPF' + i + '" value="' + Math.floor((Math.random() * 10000000000)) + '" /><p>Opções: <span id="CPFOpt' + i +'"></span></p>';
+            celula5.innerHTML = '<button class="btn btn-danger" onclick="removeLinha(this)">Remover</button>';
+
+            if (i == numeroLinhas -1) {
+                validarCampos(i);
+            }
+        }
+    }
+
+    function validarCampos(id) {
+        $.ajax({
+            url: "/Home/ValidacaoCampos",
+            type: "get",
+            dataType: "json",
+            data: {
+                unidadeGestora: $("#UnidadeGestora" + id).val(),
+                fonte: $("#Fonte" + id).val(),
+                credor: $("#Credor" + id).val(),
+                cpf: $("#CPF"+ id).val()
+            },
+            success: function (result) {
+                result[0] != "Sem Registros"
+                    ? $("#UnidadeGestoraOpt" + id).text(result[0]).css("color", "#0ba30b")
+                    : $("#UnidadeGestoraOpt" + id).text(result[0]).css("color", "#ff0000");
+                result[0] == $("#UnidadeGestora" + id).val()
+                    ? $("#UnidadeGestoraOpt" + id).append('<i class="glyphicon glyphicon-ok" ></i>').css("color", "#0ba30b")
+                    : $("#UnidadeGestoraOpt" + id).text(result[0]).css("color", "#ff0000");
+
+                result[1] != "Sem Registros"
+                    ? $("#FonteOpt" + id).text(result[1]).css("color", "#0ba30b")
+                    : $("#FonteOpt" + id).text(result[1]).css("color", "#ff0000");
+                result[1] == $("#Fonte" + id).val()
+                    ? $("#FonteOpt" + id).append('<i class="glyphicon glyphicon-ok" ></i>').css("color", "#0ba30b")
+                    : $("#FonteOpt" + id).text(result[1]).css("color", "#ff0000");
+
+                result[2] != "Sem Registros"
+                    ? $("#CredorOpt" + id).text(result[2]).css("color", "#0ba30b")
+                    : $("#CredorOpt" + id).text(result[2]).css("color", "#ff0000");
+                result[2] == $("#Credor" + id).val()
+                    ? $("#CredorOpt" + id).append('<i class="glyphicon glyphicon-ok" ></i>').css("color", "#0ba30b")
+                    : $("#CredorOpt" + id).text(result[2]).css("color", "#ff0000");
+
+                result[3] != "Sem Registros"
+                    ? $("#CPFOpt" + id).text(result[3]).css("color", "#0ba30b")
+                    : $("#CPFOpt" + id).text(result[3]).css("color", "#ff0000");
+                result[3] == $("#CPF" + id).val()
+                    ? $("#CPFOpt" + id).append('<i class="glyphicon glyphicon-ok" ></i>').css("color", "#0ba30b")
+                    : $("#CPFOpt" + id).text(result[3]).css("color", "#ff0000");
+
+
+                console.log(result);
+            },
+            error: function (xhr) {
+            }
+        });
+    }
+
+    function removeLinha(linha) {
+        var i = linha.parentNode.parentNode.rowIndex;
+        document.getElementById('tabelaC').deleteRow(i);
+    }
+
+    $("#formulario").submit(function () {
+        if (1 != 2) {
+            return
+        }
+    })
+
+</script>
